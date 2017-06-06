@@ -10,10 +10,9 @@ RUN wget -O /usr/bin/update-rancher-ssl https://raw.githubusercontent.com/ranche
 
 COPY rancher-entrypoint.sh /usr/bin/
 
-ADD https://github.com/vxcontrol/rancher-letsencrypt/releases/download/${LETSENCRYPT_RELEASE}/rancher-letsencrypt-linux-amd64.tar.gz /tmp/rancher-letsencrypt.tar.gz
+ADD rancher-letsencrypt-linux-amd64 /usr/bin/rancher-letsencrypt
 
-RUN tar -zxvf /tmp/rancher-letsencrypt.tar.gz -C /usr/bin \
-	&& chmod +x /usr/bin/rancher-letsencrypt
+RUN chmod +x /usr/bin/rancher-letsencrypt
 
 EXPOSE 80
 ENTRYPOINT ["/usr/bin/rancher-entrypoint.sh"]

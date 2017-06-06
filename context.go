@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/vxcontrol/rancher-letsencrypt/letsencrypt"
-	"github.com/vxcontrol/rancher-letsencrypt/rancher"
+	"github.com/solotimes/rancher-letsencrypt/letsencrypt"
+	"github.com/solotimes/rancher-letsencrypt/rancher"
 )
 
 const (
@@ -128,6 +128,7 @@ func (c *Context) InitContext() {
 		OvhConsumerKey:       getEnvOption("OVH_CONSUMER_KEY", false),
 		GandiApiKey:          getEnvOption("GANDI_API_KEY", false),
 		NS1ApiKey:            getEnvOption("NS1_API_KEY", false),
+		DnspodApiKey:         getEnvOption("DNSPOD_API_KEY", false),
 	}
 
 	c.Acme, err = letsencrypt.NewClient(emailParam, keyType, apiVersion, dnsResolvers, providerOpts)

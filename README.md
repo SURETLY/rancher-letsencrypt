@@ -27,6 +27,7 @@ A [Rancher](http://rancher.com/rancher/) service that obtains free SSL/TLS certi
   * `NS1`
   * `Ovh`
   * `Vultr`
+  * `Dnspod`
 
 * If using the HTTP challenge, a reverse proxy that routes `example.com/.well-known/acme-challenge` to `rancher-letsencrypt`. 
 

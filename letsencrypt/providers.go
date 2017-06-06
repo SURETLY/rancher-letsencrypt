@@ -9,13 +9,13 @@ import (
 	"github.com/xenolf/lego/providers/dns/azure"
 	"github.com/xenolf/lego/providers/dns/cloudflare"
 	"github.com/xenolf/lego/providers/dns/digitalocean"
-	"github.com/xenolf/lego/providers/dns/dnsimple"
 	"github.com/xenolf/lego/providers/dns/dyn"
 	"github.com/xenolf/lego/providers/dns/gandi"
 	"github.com/xenolf/lego/providers/dns/ns1"
 	"github.com/xenolf/lego/providers/dns/ovh"
 	"github.com/xenolf/lego/providers/dns/route53"
 	"github.com/xenolf/lego/providers/dns/vultr"
+	"github.com/xenolf/lego/providers/dns/dnspod"
 )
 
 // ProviderOpts is used to configure the DNS provider
@@ -68,6 +68,9 @@ type ProviderOpts struct {
 
 	// Vultr credentials
 	VultrApiKey string
+	
+	// Dnspod credentials
+	DnspodApiKey string
 }
 
 type Provider string
@@ -77,7 +80,6 @@ const (
 	AZURE        = Provider("Azure")
 	CLOUDFLARE   = Provider("CloudFlare")
 	DIGITALOCEAN = Provider("DigitalOcean")
-	DNSIMPLE     = Provider("DNSimple")
 	DYN          = Provider("Dyn")
 	GANDI        = Provider("Gandi")
 	NS1          = Provider("NS1")
@@ -85,6 +87,7 @@ const (
 	ROUTE53      = Provider("Route53")
 	VULTR        = Provider("Vultr")
 	HTTP         = Provider("HTTP")
+	DNSPOD	     = Provider("Dnspod")
 )
 
 type ProviderFactory struct {
@@ -97,7 +100,6 @@ var providerFactory = map[Provider]ProviderFactory{
 	AZURE:        ProviderFactory{makeAzureProvider, lego.DNS01},
 	CLOUDFLARE:   ProviderFactory{makeCloudflareProvider, lego.DNS01},
 	DIGITALOCEAN: ProviderFactory{makeDigitalOceanProvider, lego.DNS01},
-	DNSIMPLE:     ProviderFactory{makeDNSimpleProvider, lego.DNS01},
 	DYN:          ProviderFactory{makeDynProvider, lego.DNS01},
 	GANDI:        ProviderFactory{makeGandiProvider, lego.DNS01},
 	NS1:          ProviderFactory{makeNS1Provider, lego.DNS01},
@@ -105,6 +107,7 @@ var providerFactory = map[Provider]ProviderFactory{
 	ROUTE53:      ProviderFactory{makeRoute53Provider, lego.DNS01},
 	VULTR:        ProviderFactory{makeVultrProvider, lego.DNS01},
 	HTTP:         ProviderFactory{makeHTTPProvider, lego.HTTP01},
+	DNSPOD:       ProviderFactory{makeDnspodProvider, lego.DNS01},
 }
 
 func getProvider(opts ProviderOpts) (lego.ChallengeProvider, lego.Challenge, error) {
@@ -192,20 +195,20 @@ func makeRoute53Provider(opts ProviderOpts) (lego.ChallengeProvider, error) {
 }
 
 // returns a preconfigured DNSimple lego.ChallengeProvider
-func makeDNSimpleProvider(opts ProviderOpts) (lego.ChallengeProvider, error) {
-	if len(opts.DNSimpleEmail) == 0 {
-		return nil, fmt.Errorf("DNSimple Email is not set")
-	}
-	if len(opts.DNSimpleKey) == 0 {
-		return nil, fmt.Errorf("DNSimple API key is not set")
-	}
+// func makeDNSimpleProvider(opts ProviderOpts) (lego.ChallengeProvider, error) {
+// 	if len(opts.DNSimpleEmail) == 0 {
+// 		return nil, fmt.Errorf("DNSimple Email is not set")
+// 	}
+// 	if len(opts.DNSimpleKey) == 0 {
+// 		return nil, fmt.Errorf("DNSimple API key is not set")
+// 	}
 
-	provider, err := dnsimple.NewDNSProviderCredentials(opts.DNSimpleEmail, opts.DNSimpleKey)
-	if err != nil {
-		return nil, err
-	}
-	return provider, nil
-}
+// 	provider, err := dnsimple.NewDNSProviderCredentials(opts.DNSimpleEmail, opts.DNSimpleKey)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return provider, nil
+// }
 
 // returns a preconfigured Dyn lego.ChallengeProvider
 func makeDynProvider(opts ProviderOpts) (lego.ChallengeProvider, error) {
@@ -317,3 +320,17 @@ func makeNS1Provider(opts ProviderOpts) (lego.ChallengeProvider, error) {
 	}
 	return provider, nil
 }
+
+// returns a preconfigured Dnspod lego.ChallengeProvider
+func makeDnspodProvider(opts ProviderOpts) (lego.ChallengeProvider, error) {
+	if len(opts.DnspodApiKey) == 0 {
+		return nil, fmt.Errorf("Dnspod API key is not set")
+	}
+
+	provider, err := dnspod.NewDNSProviderCredentials(opts.DnspodApiKey)
+	if err != nil {
+		return nil, err
+	}
+	return provider, nil
+}
+
